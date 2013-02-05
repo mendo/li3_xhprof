@@ -80,13 +80,17 @@ class Profiler extends \lithium\core\StaticObject {
 	 * @param string $namespace The application name, defaults to the default library
 	 * @return object Returns the saved document.
 	 */
-	public static function save($data, $options = array()) {
+	public static function save($data = null, $options = array()) {
+		if(!$data) {
+			$data = static::disable();
+		}
+
 		$options += array(
 			'namespace' => static::config('namespace'),
 			'request' => null,
 			'type' => 0
 		);
-		
+
 		if (is_object($options['request'])) {
 			$request = $options['request'];
 			$options += array(
@@ -100,11 +104,13 @@ class Profiler extends \lithium\core\StaticObject {
 				'aggregateCallsInclude' => $request->get('env:xhprof_aggregateCalls_include')
 			);
 		}
+
 		$options += array(
 			'pmu' => isset($data['main()']['pmu']) ? $data['main()']['pmu'] : '',
 			'wt' => isset($data['main()']['wt'])  ? $data['main()']['wt']  : '',
 			'cpu' => isset($data['main()']['cpu']) ? $data['main()']['cpu'] : ''
 		);
+
 		if (empty($options['timestamp'])) {
 			$options['timestamp'] = time();
 		}
@@ -112,6 +118,7 @@ class Profiler extends \lithium\core\StaticObject {
 		$runs = static::$classes['runs'];
 		$run = $runs::create($options);
 		$run->perfdata = $data;
+		var_dump($run->to('array'));
 		$run->save();
 		return $run;
 	}

@@ -1,3 +1,0 @@
-[submodule "libraries/xhprof"]
-	path = libraries/xhprof
-	url = https://github.com/preinheimer/xhprof
